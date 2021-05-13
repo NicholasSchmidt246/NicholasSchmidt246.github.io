@@ -1,3 +1,11 @@
+This Directory is a clone of:
+
+https://github.com/dachev/sudoku 
+
+as a starting point for my CS-499-T5477 Computer Science Capstone 21EW5 course at Southern New Hampshire University
+
+The purpose of this course is to demonstrate various skillsets I have developed in my time as a student.
+
 
 # sudoku
       
