@@ -1,37 +1,39 @@
-## Welcome to GitHub Pages
+## Professional self-assessment
+-- Professional self-assessment to go here --
 
-You can use the [editor on GitHub](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+# Sudoku Puzzle Solver
+## Artifact Origin
+-- Artifact origin information --
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## Code Review
+-- Code review video --
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+## Enhancement 1: *(Software design and engineering)*
+### Rewrite the code in C# and transform it into a web service with a defined API. 
 ```
+code source 
+```
+-- full source reference --
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### Narrative
+-- narrative --
 
-### Jekyll Themes
+## Enhancement 2: *(Algorithms and data structure)*
+### Repair the design flaw and adjust the logic to function on squares other than just 9x9. 
+```
+code source
+```
+-- full source reference --
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### Narrative
+-- narrative --
 
-### Support or Contact
+## Enhancement 3: *(Databases)*
+### Integrate with MongoDb to hold game data / seeds. 
+```
+code source
+```
+-- full source reference --
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### Narrative
+-- narrative --
