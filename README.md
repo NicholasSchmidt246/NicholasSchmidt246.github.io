@@ -49,9 +49,10 @@ public async Task Get([FromHeader] Guid userId, [FromHeader] Guid id, Cancellati
 Source: [PuzzlesController](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/blob/master/Sudoku%20C%23%20WebService/Sudoku%20WebService/Sudoku%20WebService/Controllers/PuzzlesController.cs)
 	
 While this may not be incredibly beneficial in a Sudoku puzzle solver, it should be sufficient to demonstrate a highly marketable skillset to employers seeking to bring their code bases into the cloud. I believe I am well on my way to demonstrating more course objectives at this point than I had originally planned. In fact, at this point I feel that in my API enhancement alone I am demonstrating the following course objectives:
-	1.	Design, develop, and deliver professional-quality oral, written, and visual communications that are coherent, technically sound, and appropriately adapted to specific audiences and contexts.
-	2.	Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals.
-	3.	Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources.
+
+1.	Design, develop, and deliver professional-quality oral, written, and visual communications that are coherent, technically sound, and appropriately adapted to specific audiences and contexts.
+2.	Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals.
+3.	Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources.
 
 I have evidence of (1) specifically in the SudokuSolver [API document](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/blob/master/Sudoku%20C%23%20WebService/Sudoku%20WebService/SudokuSolver%20API.docx). I have demonstrated (2) by using some industry standard tools, some of which ironically, I learned while writing the SudokuSolver API document. My work creating a flexible API in .Net Core that can deploy to an Azure App Service that will utilize the environment variables present and utilize other Azure resources further exemplifies the migration to cloud aspect of my experience in industry-specific goals. 
 	
@@ -148,8 +149,6 @@ Thanks to the publications from Fielding et al. (1999) here are the industry sta
 -	The Options method is designed to exist for each controller to proactively define the available methods on it.
 -	Designed a define-or-default system for “Content-Type” header which will define the format of a requests body.
 -	Designed a define-or-default system for “Accept” header which will define the format of a responses body.
-
-
 
 ## Enhancement 2: *(Algorithms and data structure)*
 ### Repair the design flaw and adjust the logic to function on squares other than just 9x9. 
@@ -378,6 +377,6 @@ Source: [SeedsDbAccess](https://github.com/NicholasSchmidt246/NicholasSchmidt246
 
 Initially I also had some trouble determining the correct way to serialize the data as I am using Dictionary<int, object> instead of Dictionary<string, object> which would have been supported. I had to do some silly transformation from one to the other in my tests, but in general Serializing directly to a parent object seemed to solve the problem.
 
-##References
+## References
 
 <p>Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., Leach, P., & Berners-Lee, T. (1999, June). Request for comments: 2616. World Wide Web Consortium. https://www.w3.org/Protocols/rfc2616/rfc2616.html</p>
