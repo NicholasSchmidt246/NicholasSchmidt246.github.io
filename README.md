@@ -142,12 +142,12 @@ Source: [index](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.
 
 Thanks to the publications from Fielding et al. (1999) here are the industry standards learned during design / development.
 
-•	The Server bans REST methods not used instead of not defining them.
-	•	With the exceptions of Get and Head
-•	Banned REST methods respond with a list of acceptable methods that can be used.
-•	The Options method is designed to exist for each controller to proactively define the available methods on it.
-•	Designed a define-or-default system for “Content-Type” header which will define the format of a requests body.
-•	Designed a define-or-default system for “Accept” header which will define the format of a responses body.
+-	The Server bans REST methods not used instead of not defining them.
+	-	With the exceptions of Get and Head
+-	Banned REST methods respond with a list of acceptable methods that can be used.
+-	The Options method is designed to exist for each controller to proactively define the available methods on it.
+-	Designed a define-or-default system for “Content-Type” header which will define the format of a requests body.
+-	Designed a define-or-default system for “Accept” header which will define the format of a responses body.
 
 
 
@@ -378,6 +378,6 @@ Source: [SeedsDbAccess](https://github.com/NicholasSchmidt246/NicholasSchmidt246
 
 Initially I also had some trouble determining the correct way to serialize the data as I am using Dictionary<int, object> instead of Dictionary<string, object> which would have been supported. I had to do some silly transformation from one to the other in my tests, but in general Serializing directly to a parent object seemed to solve the problem.
 
-* References
+##References
 
-Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., Leach, P., & Berners-Lee, T. (1999, June). Request for comments: 2616. World Wide Web Consortium. https://www.w3.org/Protocols/rfc2616/rfc2616.html
+<p>Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., Leach, P., & Berners-Lee, T. (1999, June). Request for comments: 2616. World Wide Web Consortium. https://www.w3.org/Protocols/rfc2616/rfc2616.html</p>
