@@ -11,8 +11,9 @@ The artifact that was chosen to demonstrate my skills in Software Design and Eng
 ## Enhancement 1: *(Software design and engineering)*
 ### Rewrite the code in C# and transform it into a web service with a defined API. 
 
-	The chosen artifact is a perfect addition to my ePortfolio as it demonstrates an ability to review a product and securely deploy it to the cloud, which is something I have had to do for work over the last few years and is a highly sought-after skill in the current job market. Personally, it has the added touch of completing a full circle of the first final project I ever had in my college career, which was to build a Sudoku puzzle solver using linked lists in c++. The improvements made to this project that best highlight my skills in Software Design and Engineering is the addition of a RESTful API to it. 
-	I was able to design and create RESTful micro-service endpoints for the playing of Sudoku puzzles and the attached Sudoku puzzle solver itself. While the project is not fully complete, the design shows service which used to run on a webpage or downloaded on the clients pc, now securely behind an API with authorization requirements.
+The chosen artifact is a perfect addition to my ePortfolio as it demonstrates an ability to review a product and securely deploy it to the cloud, which is something I have had to do for work over the last few years and is a highly sought-after skill in the current job market. Personally, it has the added touch of completing a full circle of the first final project I ever had in my college career, which was to build a Sudoku puzzle solver using linked lists in c++. The improvements made to this project that best highlight my skills in Software Design and Engineering is the addition of a RESTful API to it. 
+
+I was able to design and create RESTful micro-service endpoints for the playing of Sudoku puzzles and the attached Sudoku puzzle solver itself. While the project is not fully complete, the design shows service which used to run on a webpage or downloaded on the clients pc, now securely behind an API with authorization requirements.
 
 Sample: Get Moves
 ``` C#
@@ -47,12 +48,12 @@ public async Task Get([FromHeader] Guid userId, [FromHeader] Guid id, Cancellati
 ```
 Source: [PuzzlesController](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/blob/master/Sudoku%20C%23%20WebService/Sudoku%20WebService/Sudoku%20WebService/Controllers/PuzzlesController.cs)
 	
-	While this may not be incredibly beneficial in a Sudoku puzzle solver, it should be sufficient to demonstrate a highly marketable skillset to employers seeking to bring their code bases into the cloud. I believe I am well on my way to demonstrating more course objectives at this point than I had originally planned. In fact, at this point I feel that in my API enhancement alone I am demonstrating the following course objectives:
+While this may not be incredibly beneficial in a Sudoku puzzle solver, it should be sufficient to demonstrate a highly marketable skillset to employers seeking to bring their code bases into the cloud. I believe I am well on my way to demonstrating more course objectives at this point than I had originally planned. In fact, at this point I feel that in my API enhancement alone I am demonstrating the following course objectives:
 	1.	Design, develop, and deliver professional-quality oral, written, and visual communications that are coherent, technically sound, and appropriately adapted to specific audiences and contexts.
 	2.	Demonstrate an ability to use well-founded and innovative techniques, skills, and tools in computing practices for the purpose of implementing computer solutions that deliver value and accomplish industry-specific goals.
 	3.	Develop a security mindset that anticipates adversarial exploits in software architecture and designs to expose potential vulnerabilities, mitigate design flaws, and ensure privacy and enhanced security of data and resources.
 
-	I have evidence of (1) specifically in the SudokuSolver [API document](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/blob/master/Sudoku%20C%23%20WebService/Sudoku%20WebService/SudokuSolver%20API.docx). I have demonstrated (2) by using some industry standard tools, some of which ironically, I learned while writing the SudokuSolver API document. My work creating a flexible API in .Net Core that can deploy to an Azure App Service that will utilize the environment variables present and utilize other Azure resources further exemplifies the migration to cloud aspect of my experience in industry-specific goals. 
+I have evidence of (1) specifically in the SudokuSolver [API document](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/blob/master/Sudoku%20C%23%20WebService/Sudoku%20WebService/SudokuSolver%20API.docx). I have demonstrated (2) by using some industry standard tools, some of which ironically, I learned while writing the SudokuSolver API document. My work creating a flexible API in .Net Core that can deploy to an Azure App Service that will utilize the environment variables present and utilize other Azure resources further exemplifies the migration to cloud aspect of my experience in industry-specific goals. 
 	
 Sample: Get Connection String
 ``` C#
@@ -70,9 +71,9 @@ public static string GetConnectionString(string connectionStringId, IConfigurati
 ```
 Source: [ServiceConfigurations](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/blob/master/Sudoku%20C%23%20WebService/Sudoku%20WebService/Sudoku%20WebService/ServiceConfigurations.cs)
 	
-	By integrating a simulated authorization system and input validation for all input resources, I have shown evidence of (3) to secure the migrated solution has consideration of access to who has authorization to access certain resources and ensuring all input is valid and/or sanitized. I have faced some major challenges during this enhancement. The original plan was to port the code from node.js, but the code ended up being near illegible among many other discovered issues. So instead, I have repaired the discovered design flaw, and am rewrote the entire tool, with all the planned enhancements. 
+By integrating a simulated authorization system and input validation for all input resources, I have shown evidence of (3) to secure the migrated solution has consideration of access to who has authorization to access certain resources and ensuring all input is valid and/or sanitized. I have faced some major challenges during this enhancement. The original plan was to port the code from node.js, but the code ended up being near illegible among many other discovered issues. So instead, I have repaired the discovered design flaw, and am rewrote the entire tool, with all the planned enhancements. 
 	
-	I discovered a design flaw in the original source code. I noticed that the puzzle is being generated without any regard to the order of the numbers in it. It then shuffles those values and begins removing values seemingly at random prior to checking to see if it has a valid puzzle. This means more often than not, this should fail to generate a valid puzzle and would be of random difficulty if it succeeds. To solve this, I decided to use seeded tables and to transform them into seemingly new puzzles with shuffled tokens, rotations and flips on the seeds. I will cover the details of this solution in the algorithms and data structure potion. Below I have included selections of the old source that highlight the discovered flaw.
+I discovered a design flaw in the original source code. I noticed that the puzzle is being generated without any regard to the order of the numbers in it. It then shuffles those values and begins removing values seemingly at random prior to checking to see if it has a valid puzzle. This means more often than not, this should fail to generate a valid puzzle and would be of random difficulty if it succeeds. To solve this, I decided to use seeded tables and to transform them into seemingly new puzzles with shuffled tokens, rotations and flips on the seeds. I will cover the details of this solution in the algorithms and data structure potion. Below I have included selections of the old source that highlight the discovered flaw.
 
 ``` js
 function makepuzzle(board) {
@@ -139,13 +140,13 @@ function checkpuzzle(puzzle, board) {
 ```
 Source: [index](https://github.com/NicholasSchmidt246/NicholasSchmidt246.github.io/blob/master/Sudoku%20JavaScript%20Version/dist-src/index.js)	
 
-	Thanks to the publications from Fielding et al. (1999) here are the industry standards learned during design / development.
-	•	The Server bans REST methods not used instead of not defining them.
-		•	With the exceptions of Get and Head
-	•	Banned REST methods respond with a list of acceptable methods that can be used.
-	•	The Options method is designed to exist for each controller to proactively define the available methods on it.
-	•	Designed a define-or-default system for “Content-Type” header which will define the format of a requests body.
-	•	Designed a define-or-default system for “Accept” header which will define the format of a responses body.
+Thanks to the publications from Fielding et al. (1999) here are the industry standards learned during design / development.
+•	The Server bans REST methods not used instead of not defining them.
+	•	With the exceptions of Get and Head
+•	Banned REST methods respond with a list of acceptable methods that can be used.
+•	The Options method is designed to exist for each controller to proactively define the available methods on it.
+•	Designed a define-or-default system for “Content-Type” header which will define the format of a requests body.
+•	Designed a define-or-default system for “Accept” header which will define the format of a responses body.
 
 
 
