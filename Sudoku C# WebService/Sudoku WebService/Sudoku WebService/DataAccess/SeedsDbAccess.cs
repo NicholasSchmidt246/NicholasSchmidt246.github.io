@@ -39,7 +39,7 @@ namespace Sudoku_WebService.DataAccess
             var ReadResults = await ReadCursorResults.ToListAsync(cancellationToken);
 
             var Rand = new Random();
-            int index = Rand.Next(0, ReadResults.Count + 1);
+            int index = Rand.Next(0, ReadResults.Count);
 
             SeedModel Seed = BsonSerializer.Deserialize<SeedModel>(ReadResults[index].AsBsonDocument);
 
