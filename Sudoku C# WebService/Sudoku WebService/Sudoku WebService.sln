@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku WebService", "Sudoku WebService\Sudoku WebService.csproj", "{9BEA4C95-F6FC-4B0F-A847-690084278C7A}"
-EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Sudoku JavaScript Version", "..\..\Sudoku JavaScript Version\", "{820E1B2A-D219-4BC8-A803-AC7470B02A7E}"
 	ProjectSection(WebsiteProperties) = preProject
 		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
@@ -23,7 +21,12 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Sudoku JavaScript Version",
 		Release.AspNetCompiler.FixedNames = "false"
 		Release.AspNetCompiler.Debug = "False"
 		VWDPort = "15924"
+		SlnRelativePath = "..\..\Sudoku JavaScript Version\"
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku WebService", "Sudoku WebService\Sudoku WebService.csproj", "{DD60A7FC-380F-40F7-BD8D-F979EB8018D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sudoku WebService.Tests", "Sudoku WebService.Tests\Sudoku WebService.Tests.csproj", "{B3AF6362-5815-4464-A839-E3C35EDEC6B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +34,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9BEA4C95-F6FC-4B0F-A847-690084278C7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9BEA4C95-F6FC-4B0F-A847-690084278C7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9BEA4C95-F6FC-4B0F-A847-690084278C7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9BEA4C95-F6FC-4B0F-A847-690084278C7A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{820E1B2A-D219-4BC8-A803-AC7470B02A7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{820E1B2A-D219-4BC8-A803-AC7470B02A7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{820E1B2A-D219-4BC8-A803-AC7470B02A7E}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{820E1B2A-D219-4BC8-A803-AC7470B02A7E}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{DD60A7FC-380F-40F7-BD8D-F979EB8018D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD60A7FC-380F-40F7-BD8D-F979EB8018D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD60A7FC-380F-40F7-BD8D-F979EB8018D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD60A7FC-380F-40F7-BD8D-F979EB8018D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3AF6362-5815-4464-A839-E3C35EDEC6B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3AF6362-5815-4464-A839-E3C35EDEC6B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3AF6362-5815-4464-A839-E3C35EDEC6B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3AF6362-5815-4464-A839-E3C35EDEC6B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 
-namespace Sudoku_WebService
+namespace Sudoku_WebService.Formatters
 {
     public static class ContentTypeTransformer
     {
@@ -38,6 +38,24 @@ namespace Sudoku_WebService
                 case UnifiedContentType.Json:
                     var jsonString = JsonConvert.SerializeObject(content);
                     return new MemoryStream(Encoding.Default.GetBytes(jsonString));
+                case UnifiedContentType.PlainText:
+                    throw new NotImplementedException();
+                case UnifiedContentType.Xml:
+                    throw new NotImplementedException();
+                default:
+                    throw new NotImplementedException();
+
+            }
+        }
+        public static T CreateObjectFromContent<T>(UnifiedContentType contentType, string content)
+        {
+            switch (contentType)
+            {
+                case UnifiedContentType.Html:
+                    throw new NotImplementedException();
+                case UnifiedContentType.Json:
+                    var FormattedObject = JsonConvert.DeserializeObject<T>(content);
+                    return FormattedObject;
                 case UnifiedContentType.PlainText:
                     throw new NotImplementedException();
                 case UnifiedContentType.Xml:

@@ -30,11 +30,11 @@ namespace Sudoku_WebService.DataAccess
 
         }
 
-        public async Task<bool> GameExists(Guid id, CancellationToken cancellationToken)
+        public async Task<bool> GameExists(Guid gameId, CancellationToken cancellationToken)
         {
             var Filter = new BsonDocument
             {
-                { "GameId", id.ToString() }
+                { "GameId", gameId.ToString() }
             };
 
             var ReadCursorResults = await ReadAsync(Filter, cancellationToken);
@@ -43,34 +43,34 @@ namespace Sudoku_WebService.DataAccess
             return (ReadResults.Count > 0);
         }
 
-        public async Task<bool> CreateGame(GameModel game, CancellationToken cancellationToken)
+        public async Task<Guid> CreateGame(GameModel game, CancellationToken cancellationToken)
         {
-            Guid Id = Guid.NewGuid();
+            Guid gameId = Guid.NewGuid();
 
-            // Verify initialized Guid does not already exist, if it does, generate a new Id
-            while (await GameExists(Id, cancellationToken))
+            // Verify initialized Guid does not already exist, if it does, generate a newgameId
+            while (await GameExists(gameId, cancellationToken))
             {
-                Id = Guid.NewGuid();
+               gameId = Guid.NewGuid();
             }
 
-            game.GameId = Id;
+            game.GameId =gameId;
             var jsonDoc = JsonConvert.SerializeObject(game);
             var bsonDoc = BsonSerializer.Deserialize<BsonDocument>(jsonDoc);
             
             await CreateAsync(bsonDoc, cancellationToken);
 
-            return await GameExists(Id, cancellationToken); // Test to confirm document was added
+            return gameId;
         }
-        public async Task<GameModel> ReadGame(Guid id, Guid playerId, CancellationToken cancellationToken)
+        public async Task<GameModel> ReadGame(Guid gameId, Guid playerId, CancellationToken cancellationToken)
         {
-            if (!await GameExists(id, cancellationToken))
+            if (!await GameExists(gameId, cancellationToken))
             {
                 throw new ArgumentException("Unauthorized");
             }
 
             var Filter = new BsonDocument()
             {
-                { "GameId", id.ToString() },
+                { "GameId",gameId.ToString() },
                 { "PlayerId", playerId.ToString() }
             };
 
@@ -88,16 +88,16 @@ namespace Sudoku_WebService.DataAccess
 
             return Game;
         }
-        public async Task<bool> UpdateGame(Guid id, Guid playerId, GameModel game, CancellationToken cancellationToken)
+        public async Task<bool> UpdateGame(Guid playerId, Guid gameId, GameModel game, CancellationToken cancellationToken)
         {
-            if (!await GameExists(id, cancellationToken))
+            if (!await GameExists(gameId, cancellationToken))
             {
                 throw new ArgumentException("");
             }
 
             var Filter = new BsonDocument()
             {
-                { "GameId", id.ToString() },
+                { "GameId", gameId.ToString() },
                 { "PlayerId", playerId.ToString() }
             };
 
@@ -117,14 +117,18 @@ namespace Sudoku_WebService.DataAccess
             var UpdateResult = await UpdateAsync(Filter, Update, cancellationToken);
             return (UpdateResult.IsAcknowledged && UpdateResult.MatchedCount > 0 && UpdateResult.ModifiedCount > 0);
         }
-        public async Task<bool> DeleteGame(Guid id, CancellationToken cancellationToken)
+        public async Task<bool> DeleteGame(Guid playerId, Guid gameId, CancellationToken cancellationToken)
         {
-            if (!await GameExists(id, cancellationToken))
+            if (!await GameExists(gameId, cancellationToken))
             {
                 throw new ArgumentException("");
             }
 
-            var Filter = Builders<BsonDocument>.Filter.Eq("GameId", id.ToString());
+            var Filter = new BsonDocument()
+            {
+                { "GameId", gameId.ToString() },
+                { "PlayerId", playerId.ToString() }
+            };
 
             var DeleteResult = await DeleteAsync(Filter, cancellationToken);
             return (DeleteResult.IsAcknowledged && DeleteResult.DeletedCount > 0);

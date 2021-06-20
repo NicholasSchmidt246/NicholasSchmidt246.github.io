@@ -2,19 +2,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
 using Microsoft.Extensions.Configuration;
 
+using Sudoku_WebService.Strategies;
+
 namespace Sudoku_WebService.Controllers
 {
     /// <summary>
-    /// The purpose for this controller is to get a unique id for each user.
-    /// 
-    /// Consideration will be required for the time between Get and Put.
-    /// 
-    /// This is by no means authentication, as this restricts no one, but it will 
+    /// This does not use authentication, as this restricts no one, but it will 
     /// allow the services to demonstate authorization while still allowing new users.
     /// </summary>
     [Route("api/[controller]")]
@@ -29,17 +28,12 @@ namespace Sudoku_WebService.Controllers
             Configuration = configuration;
         }
 
-        // GET: api/<PlayersController>
-        /// <summary>
-        /// Return Implemetation Examples for the PlayerController
-        /// </summary>
-        /// <returns></returns>
+        // Options: api/<PlayersController>
         [HttpOptions]
-        public string Options()
+        public void Options()
         {
-            // TODO: Impliment
-            Response.StatusCode = 501; // Http 501 means not implimented
-            return string.Empty;
+            Response.Headers.Add("Allow", AllowedVerbs);
+            Response.Body = null;
         }
 
         // GET api/<PlayersController>
@@ -49,15 +43,10 @@ namespace Sudoku_WebService.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet(Name = "Info")]
-        public async Task<string> Get([FromHeader] Guid id)
+        public async Task Get([FromHeader] Guid id, CancellationToken cancellationToken = new CancellationToken())
         {
-
-
-
-            // TODO: Impliment
-            await Task.Delay(0);
-            Response.StatusCode = 501; // Http 501 means not implimented
-            return string.Empty;
+            using var Auth = new AuthorizationStrategy(Configuration);
+            Response.Body = await Auth.GetUserData(Request.Headers["Accept"], id, cancellationToken);
         }
 
         // PATCH api/<PlayersController>
@@ -67,12 +56,10 @@ namespace Sudoku_WebService.Controllers
         /// <param name="id"></param>
         /// <param name="value"></param>
         [HttpPatch]
-        public async Task<bool> Patch([FromHeader] Guid id, [FromBody] string value)
+        public async Task Patch([FromHeader] Guid id, [FromBody] string userData, CancellationToken cancellationToken = new CancellationToken())
         {
-            // TODO: Impliment
-            await Task.Delay(0);
-            Response.StatusCode = 501; // Http 501 means not implimented
-            return false;
+            using var Auth = new AuthorizationStrategy(Configuration);
+            Response.Body = await Auth.UpdateUserData(Request.Headers["Content-Type"], Request.Headers["Accept"], userData, cancellationToken);
         }
 
         // POST api/<PlayersController>
@@ -82,12 +69,10 @@ namespace Sudoku_WebService.Controllers
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<Guid> Post([FromBody] string value)
+        public async Task Post([FromBody] string userData, CancellationToken cancellationToken = new CancellationToken())
         {
-            // TODO: Impliment
-            await Task.Delay(0);
-            Response.StatusCode = 501; // Http 501 means not implimented
-            return Guid.Empty;
+            using var Auth = new AuthorizationStrategy(Configuration);
+            Response.Body = await Auth.AddUserData(Request.Headers["Content-Type"], Request.Headers["Accept"], userData, cancellationToken);
         }
 
         // DELETE api/<PlayersController>/5
@@ -97,12 +82,10 @@ namespace Sudoku_WebService.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<bool> Delete([FromHeader] Guid id)
+        public async Task Delete([FromHeader] Guid id, CancellationToken cancellationToken = new CancellationToken())
         {
-            // TODO: Impliment
-            await Task.Delay(0);
-            Response.StatusCode = 501; // Http 501 means not implimented
-            return false;
+            using var Auth = new AuthorizationStrategy(Configuration);
+            Response.Body = await Auth.DeleteUserData(Request.Headers["Accept"], id, cancellationToken);
         }
 
         #region Method Not Allowed

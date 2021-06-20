@@ -7,7 +7,7 @@ namespace Sudoku_WebService.Models
 {
     public class SeedModel
     {
-        public Dictionary<int, string> Board;
+        public Dictionary<int, char?> Board;
         public int Dimension;
         public string Difficulty;
         public Guid SeedId;

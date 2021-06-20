@@ -2,36 +2,44 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Configuration;
 
 using Newtonsoft.Json.Linq;
 
+using Sudoku_WebService.DataAccess;
+using Sudoku_WebService.Models;
+
 namespace Sudoku_WebService.Strategies
 {
-    public class SeedTransformationStrategy
+    public class SeedTransformationStrategy : IDisposable
     {
-        private int dimension;
-        private List<int> Tokens = new List<int>();
-        private Dictionary<int, int?> seedBoard;
+        // ASCII 97 is 'a'
+        private const int CharOffset = 97;
 
-        public SeedTransformationStrategy(int dimension)
+        IConfiguration Config;
+
+        //private int dimension;
+        //private List<int> Tokens = new List<int>();
+        //private Dictionary<int, int?> seedBoard;
+
+        public SeedTransformationStrategy(IConfiguration config)
         {
-            this.dimension = dimension;
-            for(int index = 1; index <= dimension; index++)
-            {
-                Tokens.Add(index);
-            }
-        }
-
-        private void InitializeTokens()
-        { 
+            Config = config;
         }
         
-        public Dictionary<int, int?> GeneratePuzzleFromSeed(string difficulty)
+        public async Task<GameModel> GeneratePuzzleFromSeed(Guid userId, string difficulty, int dimension, CancellationToken cancellationToken)
         {
-            var board = new Dictionary<int, int?>();
+            var seedBoard = new Dictionary<int, char>();
+            var board = new Dictionary<int, NodeModel>();
             // Load starting seed
-            LoadSeed(difficulty);
+            var Seed = await LoadSeed(difficulty, dimension, cancellationToken);
+
+            // Execute Token Shuffle
+            var TransformTokens = ShuffleTokens(InitializeTokens(dimension));
+            board = ApplyTokens(Seed.Board, TransformTokens);
 
             // Determine Transformations
             var Rand = new Random();
@@ -42,32 +50,50 @@ namespace Sudoku_WebService.Strategies
             // Execute Transformations
             while (rotations > 0)
             {
-                board = RotateBoard(seedBoard);
+                board = RotateBoard(board, dimension);
                 rotations = rotations - 1;
             }
             while (flipHoriz > 0)
             {
-                board = FlipBoardHoriz(board);
+                board = FlipBoardHoriz(board, dimension);
                 flipHoriz = flipHoriz - 1;
             }
             while (flipVert > 0)
             {
-                board = FlipBoardVert(board);
+                board = FlipBoardVert(board, dimension);
                 flipVert = flipVert - 1;
             }
 
-            // Execute Token Shuffle
-            ShuffleTokens();
-            board = ApplyTokens(board);
+            var gameBoard = new GameModel()
+            {
+                Board = board,
+                CompletedMoves = new Dictionary<int, MoveModel>(),
+                PlayerId = userId
+            };
 
-            return board;
+            return gameBoard;
         }
 
+        private List<char> InitializeTokens(int dimension)
+        {
+            var Tokens = new List<char>();
+
+            for (int index = CharOffset; index < (CharOffset + dimension); index++)
+            {
+                Tokens.Add((char)index);
+            }
+
+            return Tokens;
+        }
         /// <summary>
         /// Shuffle the tokens to use to swap values in the seed
         /// </summary>
-        public List<int> ShuffleTokens()
+        private List<char> ShuffleTokens(List<char> Tokens)
         {
+            var ShuffledTokens = Tokens.ConvertAll(character => character).ToList();
+
+            Tokens.CopyTo(ShuffledTokens.ToArray());
+
             // We skip swapping at index zero as there are no valid targets to swap with.
             for(int index = Tokens.Count - 1; index > 0; index--)
             {
@@ -82,29 +108,34 @@ namespace Sudoku_WebService.Strategies
 
             return Tokens;
         }
-        public Dictionary<int, int?> ApplyTokens(Dictionary<int, int?> transformedBoard)
+        private Dictionary<int, NodeModel> ApplyTokens(Dictionary<int, char?> seedBoard, List<char> shuffledTokens)
         {
-            var updatedSeedBoard = new Dictionary<int, int?>();
+            var transformedBoard = new Dictionary<int, NodeModel>();
 
             // Transform values in seed board by using current value - 1 as an index to Tokens for a shuffled value
-            foreach (var node in transformedBoard)
+            foreach (var node in seedBoard)
             {
-                int? newValue = node.Value;
+                var newValue = new NodeModel()
+                {
+                    Value = null,
+                    PossibleValues = new List<int>()
+                };
 
                 if (node.Value != null)
                 {
-                    newValue = Tokens[(int)newValue - 1];
+                    // IndexOf returns a 0 based index, need to offset it by one to exclude 0 from puzzle readouts
+                    newValue.Value = shuffledTokens.IndexOf((char) node.Value) + 1;
                 }
 
-                updatedSeedBoard.Add(node.Key, newValue);
+                transformedBoard.Add(node.Key, newValue );
             }
 
-            return updatedSeedBoard;
+            return transformedBoard;
         }
 
-        public Dictionary<int, int?> RotateBoard(Dictionary<int, int?> transformingBoard)
+        private Dictionary<int, NodeModel> RotateBoard(Dictionary<int, NodeModel> transformingBoard, int dimension)
         {
-            var rotatedBoard = new Dictionary<int, int?>();
+            var rotatedBoard = new Dictionary<int, NodeModel>();
 
             foreach (var node in transformingBoard)
             {
@@ -122,9 +153,9 @@ namespace Sudoku_WebService.Strategies
 
             return SortBoard(rotatedBoard);
         }
-        public Dictionary<int, int?> FlipBoardHoriz(Dictionary<int, int?> transformingBoard)
+        private Dictionary<int, NodeModel> FlipBoardHoriz(Dictionary<int, NodeModel> transformingBoard, int dimension)
         {
-            var flippedBoard = new Dictionary<int, int?>();
+            var flippedBoard = new Dictionary<int, NodeModel>();
 
             foreach (var node in transformingBoard)
             {
@@ -140,9 +171,9 @@ namespace Sudoku_WebService.Strategies
 
             return SortBoard(flippedBoard);
         }
-        public Dictionary<int, int?> FlipBoardVert(Dictionary<int, int?> transformingBoard)
+        private Dictionary<int, NodeModel> FlipBoardVert(Dictionary<int, NodeModel> transformingBoard, int dimension)
         {
-            var flippedBoard = new Dictionary<int, int?>();
+            var flippedBoard = new Dictionary<int, NodeModel>();
 
             foreach(var node in transformingBoard)
             {
@@ -158,9 +189,14 @@ namespace Sudoku_WebService.Strategies
 
             return SortBoard(flippedBoard);
         }
-        private Dictionary<int, int?> SortBoard(Dictionary<int, int?> unorganizedBoard)
+        /// <summary>
+        /// This is to enforce the meaning of the node identity
+        /// </summary>
+        /// <param name="unorganizedBoard"></param>
+        /// <returns></returns>
+        private Dictionary<int, NodeModel> SortBoard(Dictionary<int, NodeModel> unorganizedBoard)
         {
-            var orderedBoard = new Dictionary<int, int?>();
+            var orderedBoard = new Dictionary<int, NodeModel>();
             foreach (var node in unorganizedBoard.OrderBy(Key => Key.Key))
             {
                 orderedBoard.Add(node.Key, node.Value);
@@ -168,13 +204,19 @@ namespace Sudoku_WebService.Strategies
 
             return orderedBoard;
         }
-        private void LoadSeed(string difficulty)
+        private async Task<SeedModel> LoadSeed(string difficulty, int dimension, CancellationToken cancellationToken)
         {
             var Rand = new Random();
             var index = Rand.Next(1, 3);
 
-            var SeedJObject = JObject.Parse(File.ReadAllText($"../../../../Sudoku WebService/PuzzleSeeds/{difficulty}Seed{index}_{dimension}x{dimension}.json"));
-            seedBoard = SeedJObject.ToObject<Dictionary<int, int?>>();
+            var SeedDb = new SeedsDbAccess(Config);
+            var Seed = await SeedDb.ReadSeed(difficulty, dimension, cancellationToken);
+            return Seed;
+        }
+
+        public void Dispose()
+        {
+            Config = null;
         }
     }
 }

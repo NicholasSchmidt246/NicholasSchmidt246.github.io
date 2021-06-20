@@ -13,8 +13,8 @@ namespace Sudoku_WebService.Controllers
         private const string AllowedVerbs = "Get, Post";
 
         // GET: api/<SudokuSolverController>
-        [HttpGet]
-        public string Get()
+        [HttpOptions]
+        public string Options()
         {
             // TODO: Impliment
             Response.StatusCode = 501; // Http 501 means not implimented
@@ -33,7 +33,7 @@ namespace Sudoku_WebService.Controllers
 
         // POST api/<SudokuSolverController>
         [HttpPost]
-        public async Task Post([FromHeader] Guid userId, [FromBody] string value)
+        public async Task Post([FromHeader] Guid userId, [FromBody] string puzzle)
         {
             // TODO: Impliment
             await Task.Delay(0);

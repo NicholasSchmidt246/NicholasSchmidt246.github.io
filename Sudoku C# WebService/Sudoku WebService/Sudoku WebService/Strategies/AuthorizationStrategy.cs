@@ -2,82 +2,83 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Configuration;
+
+using Sudoku_WebService.DataAccess;
+using Sudoku_WebService.Formatters;
+using Sudoku_WebService.Models;
 
 namespace Sudoku_WebService.Strategies
 {
     public class AuthorizationStrategy : IDisposable
     {
-        public Guid UserId;
+        private IConfiguration Config;
 
         #region Constructors
 
-        public AuthorizationStrategy(Guid userId)
+        public AuthorizationStrategy(IConfiguration config)
         {
-            UserId = userId;
+            Config = config;
         }
 
         #endregion
 
-        // This method does not belong in UserInputValidationStrategy as it cannot validate without the Db
-        // Only checks authorization to access service, not authorization to the puzzleId they are seeking
-        public async Task<bool> IsAuthorized(Guid userId)
-        {
-            bool isAuthorized = false;
-
-            await Task.Delay(0);
-            // TODO: Validate userId
-
-            return isAuthorized;
-        }
-
         #region UserData Manipulators
 
-        private static async Task<Guid> AddUserData(string userData)
+        private async Task<Guid> AddUserData(ContentTypeTransformer.UnifiedContentType contentType, string userData, CancellationToken cancellationToken)
         {
             if (!UserInputValidationStrategy.ValidateUserData(userData))
             {
                 throw new ArgumentException();
             }
 
-            // TODO: Submit data to Db
-            // TODO: Assign value to UserId
-            await Task.Delay(0);
+            var Player = ContentTypeTransformer.CreateObjectFromContent<PlayerModel>(contentType, userData);
 
-            return Guid.Empty;
+            var PlayerDb = new PlayersDbAccess(Config);
+            bool Success = await PlayerDb.CreatePlayer(Player, cancellationToken);
+
+            if (!Success)
+            {
+                // Throw Exception
+            }
+
+            var UserId = await PlayerDb.GetPlayerId(Player.Email, cancellationToken);
+
+            return UserId;
         }
-        private async Task<bool> DeleteUserData()
+        private async Task<bool> DeleteUserData(Guid userId, CancellationToken cancellationToken)
         {
-            await IsAuthorized(UserId);
+            // Normally, this would be restricted to the calling user only. Since we do not have a real auth system in place that will not be the case here.
+            // Trust delete, if this is to ever be a real product, this should be addressed
 
-            await Task.Delay(0);
-            // TODO: Delete userData for userId
+            var PlayerDb = new PlayersDbAccess(Config);
+            bool Success = await PlayerDb.DeletePlayer(userId, cancellationToken);
 
-            return true;
+            return Success;
         }
-        private async Task<string> GetUserData()
+        private async Task<PlayerModel> GetUserData(Guid userId, CancellationToken cancellationToken)
         {
-            await IsAuthorized(UserId);
+            var PlayerDb = new PlayersDbAccess(Config);
+            var Player = await PlayerDb.ReadPlayer(userId, cancellationToken);
 
-            await Task.Delay(0);
-            // TODO: get userData for userId
-            // TODO: return userData
-
-            return string.Empty;
+            return Player;
         }
-        private async Task<bool> UpdateUserData(string userData)
+        private async Task<bool> UpdateUserData(ContentTypeTransformer.UnifiedContentType contentType, string userData, CancellationToken cancellationToken)
         {
-            await IsAuthorized(UserId);
-
-            if(!UserInputValidationStrategy.ValidateUserData(userData))
+            if (!UserInputValidationStrategy.ValidateUserData(userData))
             {
                 throw new ArgumentException();
             }
 
-            await Task.Delay(0);
-            // TODO: Submit userData to mongo for userId
+            var Player = ContentTypeTransformer.CreateObjectFromContent<PlayerModel>(contentType, userData);
 
-            return true;
+            var PlayerDb = new PlayersDbAccess(Config);
+            bool Success = await PlayerDb.UpdatePlayer(Player, cancellationToken);
+
+            return Success;
         }
 
         #endregion
@@ -85,24 +86,25 @@ namespace Sudoku_WebService.Strategies
 
         // These methods are just decorators of our internal methods and should not be doing any work outside of that.
 
-        public static async Task<Stream> AddUserData(string contentType, string userData) // TODO: make an actual object for userData
+        public async Task<Stream> AddUserData(string inputContentType, string outputContentType, string userData, CancellationToken cancellationToken)
         {
-            var ContentType = ContentTypeTransformer.UnifyContentType(contentType);
+            var inContentType = ContentTypeTransformer.UnifyContentType(inputContentType);
+            var outContentType = ContentTypeTransformer.UnifyContentType(outputContentType);
 
-            Guid userId = await AddUserData(userData);
+            Guid userId = await AddUserData(inContentType, userData, cancellationToken);
 
             var AddUserDataResponse = new Dictionary<string, Guid>()
             {
                 { "User Id", userId }
             };
 
-            return ContentTypeTransformer.FormatContent(ContentType, AddUserDataResponse);
+            return ContentTypeTransformer.FormatContent(outContentType, AddUserDataResponse);
         }
-        public async Task<Stream> DeleteUserData(string contentType)
+        public async Task<Stream> DeleteUserData(string outputContentType, Guid userId, CancellationToken cancellationToken)
         {
-            var ContentType = ContentTypeTransformer.UnifyContentType(contentType);
+            var ContentType = ContentTypeTransformer.UnifyContentType(outputContentType);
 
-            bool DeleteSuccessful = await DeleteUserData();
+            bool DeleteSuccessful = await DeleteUserData(userId, cancellationToken);
 
             var DeleteUserDataResponse = new Dictionary<string, bool>
             {
@@ -111,33 +113,34 @@ namespace Sudoku_WebService.Strategies
 
             return ContentTypeTransformer.FormatContent(ContentType, DeleteUserDataResponse);
         }
-        public async Task<Stream> GetUserData(string contentType)
+        public async Task<Stream> GetUserData(string outputContentType, Guid userId, CancellationToken cancellationToken)
         {
-            var ContentType = ContentTypeTransformer.UnifyContentType(contentType);
+            var ContentType = ContentTypeTransformer.UnifyContentType(outputContentType);
 
-            string UserData = await GetUserData();
+            PlayerModel UserData = await GetUserData(userId, cancellationToken);
 
             return ContentTypeTransformer.FormatContent(ContentType, UserData);
         }
-        public async Task<Stream> UpdateUserData(string contentType, string userData) // TODO: make an actual object for userData
+        public async Task<Stream> UpdateUserData(string inputContentType, string outputContentType, string userData, CancellationToken cancellationToken)
         {
-            var ContentType = ContentTypeTransformer.UnifyContentType(contentType);
+            var inContentType = ContentTypeTransformer.UnifyContentType(inputContentType);
+            var outContentType = ContentTypeTransformer.UnifyContentType(outputContentType);
 
-            bool UpdateSuccessful = await UpdateUserData(userData);
+            bool UpdateSuccessful = await UpdateUserData(inContentType, userData, cancellationToken);
 
             var UpdateUserDataResponse = new Dictionary<string, bool>
             {
                 { "Update Successful", UpdateSuccessful }
             };
 
-            return ContentTypeTransformer.FormatContent(ContentType, UpdateUserDataResponse);
+            return ContentTypeTransformer.FormatContent(outContentType, UpdateUserDataResponse);
         }
 
         #endregion
 
         public void Dispose()
         {
-            UserId = Guid.Empty;
+            Config = null;
         }
     }
 }

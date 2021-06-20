@@ -74,7 +74,7 @@ namespace Sudoku_WebService.DataAccess
 
         #region CRUD Methods
 
-        public async Task<bool> CreatePlayer(string email, string userName, CancellationToken cancellationToken)
+        public async Task<bool> CreatePlayer(PlayerModel userData, CancellationToken cancellationToken)
         {
             Guid Id = Guid.NewGuid();
 
@@ -85,7 +85,7 @@ namespace Sudoku_WebService.DataAccess
             }
 
             // Verify Email is not already used for another Id
-            if(await PlayerExists(email, cancellationToken))
+            if(await PlayerExists(userData.Email, cancellationToken))
             {
                 throw new ArgumentException("Account already exists", "Email");
             }
@@ -94,8 +94,8 @@ namespace Sudoku_WebService.DataAccess
             var document = new BsonDocument()
             {
                 { "PlayerId", Id.ToString() },
-                { "Email", email },
-                { "UserName", userName }
+                { "Email", userData.Email },
+                { "UserName", userData.UserName }
             };
 
             await CreateAsync(document, cancellationToken);
@@ -130,16 +130,16 @@ namespace Sudoku_WebService.DataAccess
 
             return Player;
         }
-        public async Task<bool> UpdatePlayer(Guid id, string email, string userName, CancellationToken cancellationToken)
+        public async Task<bool> UpdatePlayer(PlayerModel userData, CancellationToken cancellationToken)
         {
-            if (!await PlayerExists(id, cancellationToken))
+            if (!await PlayerExists(userData.UserId, cancellationToken))
             {
                 throw new ArgumentException("");
             }
 
             var Builder = Builders<BsonDocument>.Filter;
-            var Filter = Builder.Eq("PlayerId", id.ToString());
-            var Update = Builders<BsonDocument>.Update.Set("Email", email).Set("UserName", userName);
+            var Filter = Builder.Eq("PlayerId", userData.UserId.ToString());
+            var Update = Builders<BsonDocument>.Update.Set("Email", userData.Email).Set("UserName", userData.UserName);
 
             var UpdateResult = await UpdateAsync(Filter, Update, cancellationToken);
             return (UpdateResult.IsAcknowledged && UpdateResult.MatchedCount > 0 && UpdateResult.ModifiedCount > 0);

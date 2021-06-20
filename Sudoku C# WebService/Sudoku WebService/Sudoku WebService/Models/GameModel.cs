@@ -25,142 +25,106 @@ namespace Sudoku_WebService.Models
         public Dictionary<int, NodeModel> Board;
         public Dictionary<int, MoveModel> CompletedMoves;
 
-        //public Dictionary<string, object> BsonBoard;
-        //public Dictionary<string, object> BsonCompletedMoves;
+        public Dictionary<string, object> BsonBoard;
+        public Dictionary<string, object> BsonCompletedMoves;
 
-        //public void Compress()
-        //{
-        //    BsonBoard = new Dictionary<string, object>();
-        //    //BsonPossibleMoves = new Dictionary<string, object>();
-        //    BsonCompletedMoves = new Dictionary<string, object>();
+        // Iterate through the entire board to populate possible moves, ideally this is only ever done once
+        public void PopulatePossibleMoves()
+        {
+            foreach(var Node in Board)
+            {
+                PopulatePossibleMoves(Node.Key);
+            }
+        }
+        public void PopulatePossibleMoves(int node)
+        {
+            var possibleMoves = GeneratePossibleMoveTemplate();
+            var MovesMadeOnNode = CompletedMoves.Values.Any(move => move.Node == node);
 
-        //    foreach (var Node in Board)
-        //    {
-        //        BsonBoard.Add(Node.Key.ToString(), Node.Value);
-        //        //BsonPossibleMoves.Add(Node.Key.ToString(), Node.Value.Item2);
-        //    }
+            if (Board[node].Value == null || MovesMadeOnNode) // Ignore populating possible moves for starting values
+            {
+                var RelatedNodes = GetRelatedNodes(node);
 
-        //    foreach (var Move in CompletedMoves)
-        //    {
-        //        BsonCompletedMoves.Add(Move.Key.ToString(), Move.Value);
-        //    }
-        //}
-        //public void Expand()
-        //{
-        //    Board = new Dictionary<int, NodeModel>();
-        //    CompletedMoves = new Dictionary<int, MoveModel>();
+                foreach (var RelatedNode in RelatedNodes)
+                {
+                    RemoveNodeValueFromPossibleMoves(RelatedNode, ref possibleMoves);
+                }
+            }
+            else
+            {
+                possibleMoves = null;
+            }
 
-        //    foreach (var Node in BsonBoard)
-        //    {
-        //        Board.Add(Convert.ToInt32(Node.Key), (NodeModel) Node.Value);
-        //    }
+            Board[node].PossibleValues = possibleMoves;
+        }
+        public List<int> GetRelatedNodes(int node)
+        {
+            var RelatedNodeList = new List<int>();
 
-        //    foreach (var Move in BsonCompletedMoves)
-        //    {
-        //        CompletedMoves.Add(Convert.ToInt32(Move.Key), (MoveModel) Move.Value);
-        //    }
-        //}
+            int dimension = Convert.ToInt32(Math.Sqrt(Board.Count));
 
-        ///// <summary>
-        ///// Creates a SudokuPuzzle with the given dimensions
-        ///// </summary>
-        ///// <param name="dimension"></param>
-        ///// <returns>A SudokuPuzzle object ready for play</returns>
-        //public static GameModel CreatePuzzle(string difficulty = "Easy", int dimension = 9)
-        //{
-        //    var PuzzleGenerator = new SeedTransformationStrategy();
-        //    GameModel Puzzle = new GameModel()
-        //    {
-        //        Board = PuzzleGenerator.GeneratePuzzleFromSeed(dimension, difficulty),
-        //        CompletedMoves = new Dictionary<int, MoveModel>(),
-        //        Id = Guid.NewGuid()
-        //    };
+            int Row = node / dimension;
+            int Col = node % dimension;
 
-        //    return Puzzle;
-        //}
-        ///// <summary>
-        ///// Allow building of Puzzles via JSON for testing now, and for loading a saved game later
-        ///// </summary>
-        ///// <param name="puzzle"></param>
-        ///// <returns></returns>
-        //public static GameModel Build(JObject puzzle)
-        //{
-        //    var Puzzle = new GameModel()
-        //    {
-        //        id = puzzle["id"].ToObject<Guid>(),
-        //        board = puzzle["board"].ToObject<Dictionary<int, int?>>(),
-        //        completedMoves = puzzle["moveHistory"].ToObject<List<MoveModel>>(),
-        //        dimension = puzzle["dimension"].ToObject<int>()
-        //    };
+            int squareRoot = Convert.ToInt32(Math.Sqrt(dimension));
 
-        //    return Puzzle;
-        //}
+            int TopLeftRowId = (Row / squareRoot) * squareRoot;
+            int TopLeftColId = (Col / squareRoot) * squareRoot;
 
-        ///// <summary>
-        ///// Submit a Move to the SudokuPuzzle
-        ///// </summary>
-        ///// <param name="submittedMove"></param>
-        ///// <returns>Boolean value to indicate if move was valid and submitted</returns>
-        //public bool SubmitMove(MoveModel submittedMove)
-        //{
-        //    if (MoveValid(submittedMove))
-        //    {
-        //        board[submittedMove.Node] = submittedMove.Entry;
+            int Cell = (TopLeftRowId * dimension) + TopLeftColId;
 
-        //        if (submittedMove.Entry != null)
-        //        {
-        //            completedMoves.Add(submittedMove);
-        //        }
+            // foreach node in Row
+            for (int index = (Row * dimension); index < ((Row + 1) * dimension); index += 1)
+            {
+                if (index != node) // Ignore current location
+                {
+                    RelatedNodeList.Add(index);
+                }
+            }
 
-        //        return true;
-        //    }
-        //    else return false;
-        //}
+            // foreach node in Col
+            for (int index = Col; index < Board.Count; index += dimension)
+            {
+                if (index != node) // Ignore current location
+                {
+                    RelatedNodeList.Add(index);
+                }
+            }
 
-        ///// <summary>
-        ///// Undo the last move submitted for this puzzle
-        ///// </summary>
-        //public void UndoLastMove()
-        //{
-        //    if (completedMoves.Count > 0)
-        //    {
-        //        MoveModel LastMove = completedMoves.Last();
-        //        completedMoves.RemoveAt(completedMoves.Count - 1);
+            // foreach node in Cell
+            for (int ColStart = Cell; ColStart < (dimension * squareRoot) + Cell; ColStart = ((ColStart / dimension) + 1) * dimension)
+            {
+                for (int index = ColStart; index < (ColStart + squareRoot); index += 1)
+                {
+                    if (index != node && (index / dimension) != Row && (index % dimension) != Col) // Ignore current location, and locations previously added by Row or Column
+                    {
+                        RelatedNodeList.Add(index);
+                    }
+                }
+            }
 
-        //        board[LastMove.Node] = null;
-        //    }
-        //}
+            return RelatedNodeList;
+        }
+        private void RemoveNodeValueFromPossibleMoves(int targetNode, ref List<int> possibleMoves)
+        {
+            var node = Board[targetNode];
+            if (node.Value != null && possibleMoves.Contains((int)node.Value))
+            {
+                possibleMoves.Remove((int)node.Value);
+            }
+        }
+        private List<int> GeneratePossibleMoveTemplate()
+        {
+            var Template = new List<int>();
 
-        ///// <summary>
-        ///// Checks a particular move against the possible values for that node
-        ///// </summary>
-        ///// <returns></returns>
-        //private bool MoveValid(MoveModel submittedMove)
-        //{
-        //    if (submittedMove.Entry == null)
-        //    {
-        //        for (int index = completedMoves.Count - 1; index > 0; index--)
-        //        {
-        //            if (submittedMove.Node == completedMoves[index].Node)
-        //            {
-        //                completedMoves.RemoveAt(index);
-        //                return true;
-        //            }
-        //        }
-        //        return false;
-        //    }
+            int dimension = Convert.ToInt32(Math.Sqrt(Board.Count));
 
-        //    List<int> possibleMoves = moves.GetMoves(board, submittedMove.Node);
+            for(int index = 1; index <= dimension; index++)
+            {
+                Template.Add(index);
+            }
 
-        //    foreach (var move in possibleMoves)
-        //    {
-        //        if (move == submittedMove.Entry)
-        //        {
-        //            return true;
-        //        }
-        //    }
-
-        //    return false;
-        //}
+            return Template;
+        }
     }
 }

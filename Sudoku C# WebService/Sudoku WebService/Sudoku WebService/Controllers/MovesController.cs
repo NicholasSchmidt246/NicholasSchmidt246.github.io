@@ -2,7 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Configuration;
+
+using Sudoku_WebService.Strategies;
 
 namespace Sudoku_WebService.Controllers
 {
@@ -11,18 +16,19 @@ namespace Sudoku_WebService.Controllers
     public class MovesController : ControllerBase
     {
         private const string AllowedVerbs = "Get, Post, Delete";
+        private readonly IConfiguration Configuration;
 
-        // GET: api/<MovesController>
-        /// <summary>
-        /// Return Implemetation Examples for the MovesController
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        public string Get()
+        public MovesController(IConfiguration configuration)
         {
-            // TODO: Impliment
-            Response.StatusCode = 501; // Http 501 means not Implimented 
-            return string.Empty;
+            Configuration = configuration;
+        }
+
+        // Options: api/<MovesController>
+        [HttpOptions]
+        public void Options()
+        {
+            Response.Headers.Add("Allow", AllowedVerbs);
+            Response.Body = null;
         }
 
         // GET api/<MovesController>
@@ -31,13 +37,11 @@ namespace Sudoku_WebService.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet(Name = "Count")]
-        public async Task<int> Get([FromHeader] Guid playerId, [FromHeader] Guid puzzleId)
+        [HttpGet]
+        public async Task Get([FromHeader] Guid userId, [FromHeader] Guid puzzleId, CancellationToken cancellationToken = new CancellationToken())
         {
-            // TODO: Impliment
-            await Task.Delay(0);
-            Response.StatusCode = 501; // Http 501 means not Implimented 
-            return int.MinValue;
+            using var Play = new PlayStrategy(Configuration);
+            Response.Body = await Play.GetMoveCount(Request.Headers["Accept"], userId, puzzleId, cancellationToken);
         }
 
         // POST api/<MovesController>
@@ -47,13 +51,10 @@ namespace Sudoku_WebService.Controllers
         /// <param name="value"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<bool> Post([FromHeader] Guid userId, [FromHeader] Guid puzzleId, [FromBody] string value)
+        public async Task Post([FromHeader] Guid userId, [FromHeader] Guid puzzleId, [FromBody] string move, CancellationToken cancellationToken = new CancellationToken())
         {
-            // TODO: Impliment
-            await Task.Delay(0);
-            Response.StatusCode = 501; // Http 501 means not Implimented 
-            Response.Body = null;
-            return false;
+            using var Play = new PlayStrategy(Configuration);
+            Response.Body = await Play.MakeMove(Request.Headers["Content-Type"], Request.Headers["Accept"], userId, puzzleId, move, cancellationToken);
         }
 
         // DELETE api/<MovesController>/5
@@ -63,12 +64,10 @@ namespace Sudoku_WebService.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
-        public async Task<bool> Delete([FromHeader] Guid userId, [FromHeader] Guid puzzleId)
+        public async Task Delete([FromHeader] Guid userId, [FromHeader] Guid puzzleId, CancellationToken cancellationToken = new CancellationToken())
         {
-            // TODO: Impliment
-            await Task.Delay(0);
-            Response.StatusCode = 501; // Http 501 means not Implimented 
-            return false;
+            using var Play = new PlayStrategy(Configuration);
+            Response.Body = await Play.DeleteMove(Request.Headers["Accept"], userId, puzzleId, cancellationToken);
         }
 
         #region Method Not Allowed
