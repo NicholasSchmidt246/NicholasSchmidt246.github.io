@@ -379,4 +379,5 @@ Initially I also had some trouble determining the correct way to serialize the d
 
 ## References
 
-<p>Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., Leach, P., & Berners-Lee, T. (1999, June). Request for comments: 2616. World Wide Web Consortium. https://www.w3.org/Protocols/rfc2616/rfc2616.html</p>
+	Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., Leach, P., & Berners-Lee, T. (1999, June). Request for comments: 2616. World Wide Web 
+		Consortium. https://www.w3.org/Protocols/rfc2616/rfc2616.html
