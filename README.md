@@ -1,11 +1,14 @@
 ## Professional self-assessment
+
 -- Professional self-assessment to go here --
 
 # Sudoku Puzzle Solver
 ## Artifact Origin
+
 The artifact that was chosen to demonstrate my skills in Software Design and Engineering, Algorithms and Data Structure, as well as Databases is an open source Sudoku Puzzle Solver in node.js. The node.js source for this artifact was created in 2011 and can be found at [https://github.com/dachev/sudoku](https://github.com/dachev/sudoku). 
 
 ## Code Review
+
 I completed a code review for the open source sudoku puzzle solver, it can be viewed [here](https://screencast-o-matic.com/watch/cr1rVNV1brL). Use the password: 21EW5
 
 ## Enhancement 1: *(Software design and engineering)*
