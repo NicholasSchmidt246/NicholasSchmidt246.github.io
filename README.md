@@ -10,6 +10,12 @@ The artifact that was chosen to demonstrate my skills in Software Design and Eng
 ## Code Review
 
 I completed a code review for the open source sudoku puzzle solver, it can be viewed [here](https://screencast-o-matic.com/watch/cr1rVNV1brL). Use the password: 21EW5
+This code review demonstrates the following course objective:
+
+1. Employ strategies for building collaborative environments that enable diverse audiences to support organizational decision
+making in the field of computer science.
+
+To do this, I explain possible future enhancements which demonstrates the capabilities of the tool. I also explain possible issues / costs based on design decisions.
 
 ## Enhancement 1: *(Software design and engineering)*
 ### Rewrite the code in C# and transform it into a web service with a defined API. 
