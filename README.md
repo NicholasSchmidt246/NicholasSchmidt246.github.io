@@ -7,7 +7,7 @@ The artifact that was chosen to demonstrate my skills in Software Design and Eng
 
 ## Code Review
 
-<iframe width=1280 height=604 frameborder="0" scrolling="no" src="https://screencast-o-matic.com/embed?sc=cr1rVNV1brL&v=5&ff=1" allowfullscreen="true"></iframe>
+I completed a code review for the open source sudoku puzzle solver, it can be viewed [here](https://screencast-o-matic.com/watch/cr1rVNV1brL). Use the password: 21EW5
 
 ## Enhancement 1: *(Software design and engineering)*
 ### Rewrite the code in C# and transform it into a web service with a defined API. 
