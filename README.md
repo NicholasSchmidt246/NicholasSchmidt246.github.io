@@ -6,7 +6,8 @@
 The artifact that was chosen to demonstrate my skills in Software Design and Engineering, Algorithms and Data Structure, as well as Databases is an open source Sudoku Puzzle Solver in node.js. The node.js source for this artifact was created in 2011 and can be found at [https://github.com/dachev/sudoku](https://github.com/dachev/sudoku). 
 
 ## Code Review
--- Code review video --
+
+<iframe width=1280 height=604 frameborder="0" scrolling="no" src="https://screencast-o-matic.com/embed?sc=cr1rVNV1brL&v=5&ff=1" allowfullscreen="true"></iframe>
 
 ## Enhancement 1: *(Software design and engineering)*
 ### Rewrite the code in C# and transform it into a web service with a defined API. 
